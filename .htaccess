@@ -1,0 +1,40 @@
+# Options -Indexes
+RewriteEngine On
+# RewriteBase /sfstrue/
+
+# auth
+# RewriteRule ^register register.php
+# RewriteRule ^register/([A-Za-z0-9\-\_\.]+) register.php?step=$1
+
+# profile
+   RewriteRule ^u/([A-Za-z0-9\-\_\.]+)/([A-Za-z0-9\-\_\.]+) profile.php?u=$1&view=$2
+   RewriteRule ^u/ profile.php
+   RewriteRule ^u profile.php
+
+# settings
+   RewriteRule ^settings settings.php
+   RewriteRule ^settings/ settings.php
+
+# feed
+   RewriteRule ^home index.php
+   RewriteRule ^home/ index.php
+   RewriteRule ^/ index.php
+   RewriteRule ^feed index.php
+   RewriteRule ^feed/ index.php
+
+# tags
+   RewriteRule ^tag/(.*)$ hashtag.php?tag=$1 [L]
+   RewriteRule ^tags/ hashtag.php
+   RewriteRule ^tags hashtag.php
+   RewriteRule ^tag/ hashtag.php
+   RewriteRule ^tag hashtag.php
+
+# account
+   RewriteRule ^account/([A-Za-z0-9\-\_\.]+) account.php?view=$1
+   RewriteRule ^account/ account.php
+   RewriteRule ^account account.php
+
+# auth
+   RewriteRule ^login auth.php?view=login
+   RewriteRule ^register auth.php?view=register [QSA]
+   RewriteRule ^forgot-password auth.php?view=forgot-password
