@@ -21,7 +21,7 @@ if (isset($_POST['action'])) {
       if (!is_numeric($step)) {
          die('Wrong step number');
       }else if ($step != $_SESSION['step']) {
-         $step = $_SESSION['step']; 
+         $step = $_SESSION['step'];
       }
 
       // validate forms
@@ -66,7 +66,7 @@ if (isset($_POST['action'])) {
 
             } else {
                echo json_encode($r);
-            }       
+            }
          }
          if ($_GET['form'] == 2) { // step 2 form submit
             if (empty($_POST['username'])) {
@@ -121,11 +121,11 @@ if (isset($_POST['action'])) {
                echo json_encode($r);
             } else {
                echo json_encode($r);
-            } 
+            }
          }
 
          if ($_GET['form'] == 3) { // step 3 form submit
-            
+
             if (empty($_POST['lang']) || empty($_POST['country']) || empty($_POST['city'])) {
                $r = ['type' => 'error', 'message' => 'All fields must be filled out'];
                echo json_encode($r);
@@ -155,7 +155,7 @@ if (isset($_POST['action'])) {
          if ($_GET['form'] == 4) { // step 4 form submit
             $login = $_SESSION['email'];
             $pass = $_SESSION['passwordnh'];
-            session_destroy(); 
+            session_destroy();
             Auth::login($login, $pass);
             // TODO: redirect to index.php
             // note: require(index.php) and header() does not work
@@ -172,17 +172,28 @@ if (isset($_POST['action'])) {
       }
 
    } else if ($action == 3) {
+      session_start();
+      if (!isset($_SESSION['forgot-password-attempt'])) {
+         $_SESSION['forgot-password-attempt'] = 1;
+      }
+
+      $_SESSION['forgot-password-attempt'] += 1;
+
+      if ($_SESSION['forgot-password-attempt'] > 3) {
+
+         $r = ['type' => 'error', 'message' => 'Easy! You\'ve used all attempts'];
+         echo json_encode($r);
+         exit();
+      }
       if (!isset($_POST['email'])) {
          $r = ['type' => 'error', 'message' => 'Email field is empty'];
          echo json_encode($r);
          exit();
       }
 
-      $r = Auth::forgotPassword(Security::check($_POST['email']));
-
-      // if ($r["type"] == "success") {
-   
-      // }   
+      $r = Auth::forgotPassword($_POST['email']);
+      $r['message'] = $_SESSION['forgot-password-attempt'];
+      echo json_encode($r);
    }
 
 }

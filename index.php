@@ -1,7 +1,8 @@
 <?php require('app/autoload.php'); session_start();
-if (!Auth::loggedin()) { ?>
-   <!DOCTYPE html><html lang="en"><head><?php require('app/incs/head-metas.inc.php'); ?><title>Social Network</title></head><body><h1>Home Page</h1><a href="<?php echo App::$APP_DIR; ?>/register">register</a><br><div id="errors"><?php if (isset($_GET['error'])) {$error = Security::check($_GET['error']);echo $error;}?></div><form action="login.php" method="post"><input type="text" name="login" placeholder="username or email address"><input type="password" name="password" placeholder="password"><button type="submit" name="loginbtn">login</button></form></body></html>
-<?php
+if (!Auth::loggedin()) {
+   ?>
+   <!DOCTYPE html><html lang="en"><head><?php require('app/incs/head-metas.inc.php'); ?><title id="PageTitle">SFS</title></head><body><div id="app"></div><script>$(function() {$.ajax({url: "http://localhost/sfstrue/login",success: function(data) {$("#app").html(data);}});})</script></body></html>
+   <?php
    exit();
 }
 
@@ -13,7 +14,7 @@ if (!isset($_SESSION['userdata'])) {
 <html lang="en">
 <head>
    <?php require('app/incs/head-metas.inc.php'); ?>
-   <title>SFS</title>
+   <title id="PageTitle">SFS</title>
 </head>
 <body onload="loadPosts()">
    <?php include('app/modules/nav.php'); ?>

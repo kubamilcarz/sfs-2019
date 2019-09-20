@@ -18,7 +18,7 @@
       if (!isset($_GET['step']) || !in_array($_GET['step'], [1, 2, 3, 4])) { # in_array compares which steps are valid
          header('Location: ' . App::$APP_DIR . '/register?step=1');
          exit();
-      }  
+      }
    }
 
    $view = Security::check($_GET['view']);
@@ -40,7 +40,7 @@
 <body>
    <?php include('app/modules/nav-nl.php'); ?>
 
-   <div class="hn_page_right-side-columns clearfix">
+   <div class="hn_page_right-side-columns clearfix" id="auth-container">
       <?php include './app/modules/auth/' . $view . '.php'; ?>
       <div class="clearfix"></div>
    </div>

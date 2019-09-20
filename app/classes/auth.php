@@ -5,6 +5,47 @@ class Auth {
    public static $error = "";
    private static $countries = array("Afghanistan", "Aland Islands", "Albania", "Algeria", "American Samoa", "Andorra", "Angola", "Anguilla", "Antarctica", "Antigua", "Argentina", "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Barbuda", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bosnia", "Botswana", "Bouvet Island", "Brazil", "British Indian Ocean Trty.", "Brunei Darussalam", "Bulgaria", "Burkina Faso", "Burundi", "Caicos Islands", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Christmas Island", "Cocos (Keeling) Islands", "Colombia", "Comoros", "Congo", "Congo, Democratic Republic of the", "Cook Islands", "Costa Rica", "Cote d'Ivoire", "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands (Malvinas)", "Faroe Islands", "Fiji", "Finland", "France", "French Guiana", "French Polynesia", "French Southern Territories", "Futuna Islands", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guernsey", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Heard", "Herzegovina", "Holy See", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran (Islamic Republic of)", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Jamaica", "Jan Mayen Islands", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Korea", "Korea (Democratic)", "Kuwait", "Kyrgyzstan", "Lao", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libyan Arab Jamahiriya", "Liechtenstein", "Lithuania", "Luxembourg", "Macao", "Macedonia", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Martinique", "Mauritania", "Mauritius", "Mayotte", "McDonald Islands", "Mexico", "Micronesia", "Miquelon", "Moldova", "Monaco", "Mongolia", "Montenegro", "Montserrat", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "Netherlands Antilles", "Nevis", "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "Northern Mariana Islands", "Norway", "Oman", "Pakistan", "Palau", "Palestinian Territory, Occupied", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Pitcairn", "Poland", "Portugal", "Principe", "Puerto Rico", "Qatar", "Reunion", "Romania", "Russian Federation", "Rwanda", "Saint Barthelemy", "Saint Helena", "Saint Kitts", "Saint Lucia", "Saint Martin (French part)", "Saint Pierre", "Saint Vincent", "Samoa", "San Marino", "Sao Tome", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Georgia", "South Sandwich Islands", "Spain", "Sri Lanka", "Sudan", "Suriname", "Svalbard", "Swaziland", "Sweden", "Switzerland", "Syrian Arab Republic", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "The Grenadines", "Timor-Leste", "Tobago", "Togo", "Tokelau", "Tonga", "Trinidad", "Tunisia", "Turkey", "Turkmenistan", "Turks Islands", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "US Minor Outlying Islands", "Uzbekistan", "Vanuatu", "Vatican City State", "Venezuela", "Vietnam", "Virgin Islands (British)", "Virgin Islands (US)", "Wallis", "Western Sahara", "Yemen", "Zambia", "Zimbabwe");
 
+   public static $errors = [
+      'en' => [
+         'register' => [
+            // step 1
+               'Incorrect birthday', #1
+               'Incorrect day', #2
+               'Incorrect year', #3
+               'Incorrect month', #4
+               '29th of February is not a valid date', #5
+               'This month has 30 days', #6
+               'February has only 28 or 29 days', #7
+               'Incorrect email address', #8
+               'Email address is already taken', #9
+               'Passwords do not match', #10
+               'Password has to be at least 8 characters long', #11
+               'Email address has to be at least 8 characters long', #12
+               'Incorrect gender', #13
+               'Incorrect first name (min: 2 max: 32 characters)', #14
+               'Incorrect last name (min: 2 max: 32 characters)', #15
+               'Name can contain only letters', #16
+            // step 2
+               'Incorrect username (min: 3 max: 32 characters)', #17
+               'Username is already taken', #18
+               'Username can contain only letters & numbers', #19
+               'Phone number can contain only numbers', #20
+               'Incorrect bio (min: 3 max: 64 characters)', #21
+               'Problem occured while uploading your profile picture', #22
+               'Problem occured while uploading your background picture', #23
+            // step 3
+               'Incorrect language', #24
+               'Incorrect country', #25
+               'Incorrect city', #26
+               'City name has to be at least 3 characters long' #27
+         ],
+         'forgot-password' => [
+            'Incorrect email address', #1
+            'Email address is not used' #2
+         ]
+      ]
+   ];
+
    public function logout() {
       DB::query('DELETE FROM login_tokens WHERE logint_userid=:userid', array(':userid'=>self::loggedin()));
       setcookie("" . self::$system_cookie_name . "", '1', time()-3600);
@@ -98,24 +139,23 @@ class Auth {
    public function forgotPassword($email) {
       if (strpos($email, '@') !== false) {
          if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            if (DB::query('SELECT user_email FROM users WHERE user_email=:email', [':email'=>$email])[0]['user_email']) {
+            if (DB::query('SELECT users_email FROM users WHERE users_email=:email', [':email'=>$email])[0]['users_email']) {
                $cstrong = True;
                $token = bin2hex(openssl_random_pseudo_bytes(64, $cstrong));
-               $user_id = DB::query('SELECT id FROM users WHERE user_email=:email', [':email'=>$email])[0]['id'];
-               $bdate = date('Y-m-d H:i:s');
-               DB::query('INSERT INTO password_tokens VALUES (\'\', :token, :user_id, :bdate)', [':token'=>sha1($token), ':user_id'=>$user_id, ':bdate'=>$bdate]);
-               # '
+               $user_id = DB::query('SELECT id FROM users WHERE users_email=:email', [':email'=>$email])[0]['id'];
+               DB::query('INSERT INTO password_tokens VALUES (\'\', :token, :user_id, NOW())', [':token'=>sha1($token), ':user_id'=>$user_id]);
+
                // TODO: connect to mailing system
                // Mail::sendMail('Zresetuj hasło.', "<a href='http://localhost/facebook/change-password.php?token=$token'>http://localhost/social-network/change-password.php?token=$token</a>", $email);
-               header('Location: forgot-password.php?error=1'); exit();
+               return ['type' => 'success', 'message' => 'success'];
             } else {
-               header('Location: forgot-password.php?error=2'); exit();
+               return ['type' => 'error', 'message' => self::$errors['en']['forgot-password'][1]];
             }
          } else {
-            header('Location: forgot-password.php?error=3'); exit();
+            return ['type' => 'error', 'message' => self::$errors['en']['forgot-password'][0]];
          }
       } else {
-         header('Location: forgot-password.php?error=4'); exit();
+         return ['type' => 'error', 'message' => self::$errors['en']['forgot-password'][0]];
       }
    }
 

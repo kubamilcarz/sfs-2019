@@ -17,6 +17,7 @@ echo '<a href="./register">Register</a>';
          <input type="password" id="input-password" placeholder="password">
          <button type="submit" name="loginbtn">login</button>
       </form>
+      <a href="#" data-location="forgot-password" style="margin-left: 155px">forgot password</a>
    </div>
 </div>
 
@@ -28,16 +29,27 @@ echo '<a href="./register">Register</a>';
          url: "<?php echo App::$APP_DIR; ?>/app/api/auth.php",
          type: 'POST',
          data: { action: 1, login: $('#input-login').val(), password: $('#input-password').val() },
-         success: function(r) {  
+         success: function(r) {
             if (r == true) {
                location.reload();
             } else {
                $('#input-password').val("");
                $("#errors-box").html(r);
             }
-            
+
          }
       })
-
    })
+   $('[data-location]').click(function(e) {
+      e.preventDefault();
+      let button = $(this).attr('data-location');
+      window.history.pushState(null, button.charAt(0).toUpperCase() + button.slice(1), button);
+      document.title = 'SFS';
+      $.ajax({
+         url: "http://localhost/sfstrue/"+button,
+         success: function(data) {
+            $('#auth-container').html(data);
+         }
+      })
+   });
 </script>

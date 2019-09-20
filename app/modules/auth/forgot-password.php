@@ -24,8 +24,14 @@ echo '<h1>Forgot Password</h1>';
          url: "<?php echo App::$APP_DIR; ?>/app/api/auth.php",
          type: 'POST',
          data: { action: 3, email: $('#email').val() },
-         success: function(r) {  
-            $("#errors-box").html(r);     
+         success: function(r) {
+				r = JSON.parse(r)
+            if (r.type == "error") {
+               $("#errors-box").html(r.message);
+            } else if (r.type == "success") {
+               $("#errors-box").html(r.message);
+					$('#email').val("");
+            }
          }
       })
 
