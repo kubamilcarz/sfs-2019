@@ -35,8 +35,7 @@ class Post
       $topics = self::getTopics($content);
       $bdate = date('Y-m-d H:i:s');
       DB::query('INSERT INTO posts VALUES (\'\', :userid, :content, :topics, :privacy, :likes, :comments, :shares, :bdate)', [':userid' => $userid, ':content' => $content, ':topics' => $topics, ':privacy' => $privacy, ':likes' => 0, ':comments' => 0, ':shares' => 0, ':bdate' => $bdate]);
-      #'
-
+      
       # insert tags
       $topics = explode(",", $topics);
       foreach($topics as $tag) {
@@ -98,26 +97,6 @@ class Post
          }
       }
       return $newstring;
-   }
-
-   // NOTE: To the trash - not used anymore
-   public static function displayPosts($userid, $number) {
-      $posts = DB::query('SELECT posts.posts_id, posts.posts_content, posts.posts_likes, posts.posts_comments, posts.posts_timestamp, users.users_name, users.users_username, users.users_sex, users.users_avatar FROM posts, users, followers WHERE users.id = :userid AND posts.posts_privacy = 1 AND followers.followers_userid = :userid AND posts.posts_authorid = followers.followers_followerid ORDER BY posts_timestamp DESC LIMIT ' . $number, [':userid' => $userid]);
-      foreach ($posts as $post) { ?>
-         <div style='width: 540px; background: #efefef; margin-bottom: 15px;'>
-            <div3>
-               <img src="<?php echo $post['users_avatar']; ?>">
-               <h1><?php echo $post['users_name']; ?></h1>
-               <p style='text-align: right;'><?php echo $post['posts_timestamp']; ?></p>
-            </div>
-            <div>
-               <?php
-                  # it must be faster, php cannot check all the if statements in link_add function <- FIXME: find another way of doing this
-                  echo Post::link_add($post['posts_content']);
-               ?>
-            </div>
-         </div>
-      <?php }
    }
 
 }

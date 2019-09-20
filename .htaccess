@@ -38,3 +38,6 @@ RewriteEngine On
    RewriteRule ^login auth.php?view=login
    RewriteRule ^register auth.php?view=register [QSA]
    RewriteRule ^forgot-password auth.php?view=forgot-password
+
+# posts
+   RewriteRule ^post post.php [QSA]
